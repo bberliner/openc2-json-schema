@@ -13,6 +13,9 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
+    implementation("org.leadpony.justify", "justify", "0.12.0")
+    implementation("org.glassfish", "javax.json", "1.1.4")
+
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
 }
