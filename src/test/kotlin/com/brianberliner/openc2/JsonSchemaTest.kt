@@ -42,7 +42,7 @@ class JsonSchemaTest {
             "command_id": "queryOpenC2ProfilesValid",
             "action": "query",
             "target": {
-                "features": [ "profiles" ]
+                "features": [ "profilesX" ]
             }
         }""".trimIndent()
 
