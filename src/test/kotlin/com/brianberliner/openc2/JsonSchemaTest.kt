@@ -18,13 +18,19 @@ package com.brianberliner.openc2
 
 import assertk.assertThat
 import assertk.assertions.isEmpty
+import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import org.leadpony.justify.api.JsonValidationService
 import org.leadpony.justify.api.Problem
 import org.leadpony.justify.api.ProblemHandler
-import java.io.ByteArrayInputStream
+import java.io.File
+import java.lang.Exception
 import java.nio.file.Paths
+import java.util.stream.Stream
+import javax.json.stream.JsonParsingException
 
 class JsonSchemaTest {
 
@@ -37,63 +43,72 @@ class JsonSchemaTest {
     @BeforeEach
     fun beforeTest() = problems.clear()
 
-    private val queryOpenC2ProfilesValid = """
-        {
-            "command_id": "queryOpenC2ProfilesValid",
-            "action": "query",
-            "target": {
-                "features": [ "profiles" ]
-            }
-        }""".trimIndent()
-
-    @Test
-    fun `can validate OpenC2 queryProfiles Command with Justify Reader`() {
-        val stream = ByteArrayInputStream(queryOpenC2ProfilesValid.toByteArray())
-        service.createReader(stream, commandSchema, handler).use { reader ->
+    @ParameterizedTest
+    @MethodSource("goodCommands")
+    fun `can validate good OpenC2 Commands`(file: File) {
+        service.createReader(file.inputStream(), commandSchema, handler).use { reader ->
             val value = reader.readValue()
             assertThat(problems).isEmpty()
             assertThat(value).isNotNull()
+            reader.close()
         }
     }
 
-    private val queryFeaturesResponseValid = """
-        {
-            "status": 200,
-            "status_text": "OK",
-            "versions": [
-                "1.0-draft-2019-02"
-            ],
-            "profiles": [
-                "x-myextension"
-            ],
-            "pairs": {
-                "query": [
-                    "features"
-                ],
-                "deny": [
-                    "file"
-                ],
-                "allow": [
-                    "file",
-                    "device"
-                ],
-                "remediate": [
-                    "file"
-                ],
-                "contain": [
-                    "device"
-                ]
+    @ParameterizedTest
+    @MethodSource("badCommands")
+    fun `cannot validate bad OpenC2 Commands`(file: File) {
+        try {
+            service.createReader(file.inputStream(), commandSchema, handler).use { reader ->
+                val value = reader.readValue()
+                assertThat(problems).isNotEmpty()
+                assertThat(value).isNotNull()
+                reader.close()
             }
-        }""".trimIndent()
+        } catch (e: Exception) {
+            assertThat(e is JsonParsingException)
+        }
+    }
 
-    @Test
-    fun `can validate OpenC2 queryFeature Response with Justify Reader`() {
-        val stream = ByteArrayInputStream(queryFeaturesResponseValid.toByteArray())
-        service.createReader(stream, responseSchema, handler).use { reader ->
+    @ParameterizedTest
+    @MethodSource("goodResponses")
+    fun `can validate good OpenC2 Responses`(file: File) {
+        service.createReader(file.inputStream(), responseSchema, handler).use { reader ->
             val value = reader.readValue()
             assertThat(problems).isEmpty()
             assertThat(value).isNotNull()
+            reader.close()
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("badResponses")
+    fun `cannot validate bad OpenC2 Responses`(file: File) {
+        try {
+            service.createReader(file.inputStream(), responseSchema, handler).use { reader ->
+                val value = reader.readValue()
+                assertThat(problems).isNotEmpty()
+                assertThat(value).isNotNull()
+                reader.close()
+            }
+        } catch (e: Exception) {
+            assertThat(e is JsonParsingException)
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun goodCommands(): Stream<File> = findJsonFilesUnder("commands/good").stream()
+
+        @JvmStatic
+        fun badCommands(): Stream<File> = findJsonFilesUnder("commands/bad").stream()
+
+        @JvmStatic
+        fun goodResponses(): Stream<File> = findJsonFilesUnder("responses/good").stream()
+
+        @JvmStatic
+        fun badResponses(): Stream<File> = findJsonFilesUnder("responses/bad").stream()
+
+        private fun findJsonFilesUnder(dir: String) =
+            File("src/test/resources/$dir").walkTopDown().filter { it.name.endsWith(".json") }.toList()
+    }
 }
