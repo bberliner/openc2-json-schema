@@ -23,11 +23,11 @@ import assertk.assertions.isNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import org.leadpony.justify.api.JsonSchema
 import org.leadpony.justify.api.JsonValidationService
 import org.leadpony.justify.api.Problem
 import org.leadpony.justify.api.ProblemHandler
 import java.io.File
-import java.lang.Exception
 import java.nio.file.Paths
 import java.util.stream.Stream
 import javax.json.stream.JsonParsingException
@@ -45,34 +45,23 @@ class JsonSchemaTest {
 
     @ParameterizedTest
     @MethodSource("goodCommands")
-    fun `can validate good OpenC2 Commands`(file: File) {
-        service.createReader(file.inputStream(), commandSchema, handler).use { reader ->
-            val value = reader.readValue()
-            assertThat(problems).isEmpty()
-            assertThat(value).isNotNull()
-            reader.close()
-        }
-    }
+    fun `can validate good OpenC2 Commands`(file: File) = goodTester(commandSchema, file)
 
     @ParameterizedTest
     @MethodSource("badCommands")
-    fun `cannot validate bad OpenC2 Commands`(file: File) {
-        try {
-            service.createReader(file.inputStream(), commandSchema, handler).use { reader ->
-                val value = reader.readValue()
-                assertThat(problems).isNotEmpty()
-                assertThat(value).isNotNull()
-                reader.close()
-            }
-        } catch (e: Exception) {
-            assertThat(e is JsonParsingException)
-        }
-    }
+    fun `cannot validate bad OpenC2 Commands`(file: File) = badTester(commandSchema, file)
 
     @ParameterizedTest
     @MethodSource("goodResponses")
-    fun `can validate good OpenC2 Responses`(file: File) {
-        service.createReader(file.inputStream(), responseSchema, handler).use { reader ->
+    fun `can validate good OpenC2 Responses`(file: File) = goodTester(responseSchema, file)
+
+    @ParameterizedTest
+    @MethodSource("badResponses")
+    fun `cannot validate bad OpenC2 Responses`(file: File) = badTester(responseSchema, file)
+
+
+    private fun goodTester(schema: JsonSchema, file: File) {
+        service.createReader(file.inputStream(), schema, handler).use { reader ->
             val value = reader.readValue()
             assertThat(problems).isEmpty()
             assertThat(value).isNotNull()
@@ -80,20 +69,24 @@ class JsonSchemaTest {
         }
     }
 
-    @ParameterizedTest
-    @MethodSource("badResponses")
-    fun `cannot validate bad OpenC2 Responses`(file: File) {
+
+    private fun badTester(schema: JsonSchema, file: File) {
         try {
-            service.createReader(file.inputStream(), responseSchema, handler).use { reader ->
+            service.createReader(file.inputStream(), schema, handler).use { reader ->
                 val value = reader.readValue()
                 assertThat(problems).isNotEmpty()
                 assertThat(value).isNotNull()
                 reader.close()
+                println("Input JSON: $value\n")
+                println("Has validation errors:")
+                service.createProblemPrinter(System.out::println).handleProblems(problems)
             }
         } catch (e: Exception) {
             assertThat(e is JsonParsingException)
+            println("File: '${file.name}' Throws ${e.javaClass.simpleName}: ${e.message}")
         }
     }
+
 
     companion object {
         @JvmStatic

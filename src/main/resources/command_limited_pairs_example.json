@@ -12,9 +12,30 @@
   "definitions": {
     "action": {
       "title": "OpenC2 Action",
-      "$comment": "Could use oneOf with const instead of enum to have titles on each item (see example)",
+      "$comment": "Only using oneOf with const instead of enum directly to have titles on each item",
       "type": "string",
-      "enum": ["scan", "locate", "query", "deny", "contain", "allow", "start", "stop", "restart", "cancel", "set", "update", "redirect", "create", "delete", "detonate", "restore", "copy", "investigate", "remediate"]
+      "oneOf": [
+        { "const":  "scan", "title": "Systematic examination of some aspect of the entity or its environment." },
+        { "const":  "locate", "title": "Find an object physically, logically, functionally, or by organization." },
+        { "const":  "query", "title": "Initiate a request for information." },
+        { "const":  "deny", "title": "Prevent a certain event or action from completion, such as preventing a flow from reaching a destination or preventing access." },
+        { "const":  "contain", "title": "Isolate a file, process, or entity so that it cannot modify or access assets or processes." },
+        { "const":  "allow", "title": "Permit access to or execution of a Target." },
+        { "const":  "start", "title": "Initiate a process, application, system, or activity." },
+        { "const":  "stop", "title": "Halt a system or end an activity." },
+        { "const":  "restart", "title": "Stop then start a system or an activity." },
+        { "const":  "cancel", "title": "Invalidate a previously issued Action." },
+        { "const":  "set", "title": "Change a value, configuration, or state of a managed entity." },
+        { "const":  "update", "title": "Instruct a component to retrieve, install, process, and operate in accordance with a software update, reconfiguration, or other update." },
+        { "const":  "redirect", "title": "Change the flow of traffic to a destination other than its original destination.\n" },
+        { "const":  "create", "title": "Add a new entity of a known type (e.g., data, files, directories).\n" },
+        { "const":  "delete", "title": "Remove an entity (e.g., data, files, flows).\n" },
+        { "const":  "detonate", "title": "Execute and observe the behavior of a Target (e.g., file, hyperlink) in an isolated environment.\n" },
+        { "const":  "restore", "title": "Return a system to a previously known state.\n" },
+        { "const":  "copy", "title": "Duplicate an object, file, data flow or artifact.\n" },
+        { "const":  "investigate", "title": "Task the recipient to aggregate and report information as it pertains to a security event or incident.\n" },
+        { "const":  "remediate", "title": "Task the recipient to eliminate a vulnerability or attack point.\n" }
+      ]
     },
 
     "actuator": {
@@ -57,9 +78,14 @@
         },
         "response_requested": {
           "title": "The type of Response required for the Action",
-          "$comment": "Could use oneOf with const instead of enum to have titles on each item (see example)",
+          "$comment": "Only using oneOf with const instead of enum directly to have titles on each item",
           "type": "string",
-          "enum": ["none", "ack", "status", "complete"]
+          "oneOf": [
+            { "const":  "none", "title": "No response" },
+            { "const":  "ack", "title": "Respond when Command received" },
+            { "const":  "status", "title": "Respond with progress toward Command completion" },
+            { "const":  "complete", "title": "Respond when all aspects of Command completed" }
+          ]
         },
         "slpf": {
           "title": "Command Arguments defined in the Stateless Packet Filter profile",
@@ -143,13 +169,18 @@
 
     "features": {
       "title": "An array of zero to ten names used to query an Actuator for its supported capabilities.",
-      "$comment": "Upgraded to not allow repeating enums in the array (unique items only). Could use oneOf with const instead of enum to have titles on each item (see example)",
+      "$comment": "Upgraded to not allow repeating enums in the array (unique items only). Only using oneOf with const instead of enum directly to have titles on each item",
       "type": "array",
       "uniqueItems": true,
       "items": {
         "title": "OpenC2 Features items",
         "type": "string",
-        "enum": ["versions", "profiles", "pairs", "rate_limit"]
+        "oneOf": [
+          { "const":  "versions", "title": "List of OpenC2 Language versions supported by this Actuator" },
+          { "const":  "profiles", "title": "List of profiles supported by this Actuator" },
+          { "const":  "pairs", "title": "List of supported Actions and applicable Targets" },
+          { "const":  "rate_limit", "title": "Maximum number of requests per minute supported by design or policy" }
+        ]
       }
     },
 
@@ -243,9 +274,15 @@
 
     "l4_protocol": {
       "title": "Value of the protocol (IPv4) or next header (IPv6) field in an IP packet. Any IANA value, RFC 5237",
-      "$comment": "Could use oneOf with const instead of enum to have titles on each item (see example)",
+      "$comment": "Only using oneOf with const instead of enum directly to have titles on each item",
       "type": "string",
-      "enum": ["icmp", "tcp", "udp", "sctp"]
+      "oneOf": [
+        { "const": "icmp", "title": "Internet Control Message Protocol - RFC 792" },
+        { "const": "tcp", "title": "Transmission Control Protocol - RFC 793" },
+        { "const": "udp", "title": "User Datagram Protocol - RFC 768" },
+        { "const": "sctp", "title": "Stream Control Transmission Protocol - RFC 4960" }
+      ],
+      "additionalProperties": false
     },
 
     "mac_addr": {
@@ -415,5 +452,45 @@
     "actuator": { "$ref": "#/definitions/actuator" },
     "command_id": { "$ref": "#/definitions/command" }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+
+  "$comment": "EXAMPLE usage below of how one might use oneOf to limit a call to only a supported subset of action-target pairs",
+  "oneOf": [
+    {
+      "properties": {
+        "action": { "const": "query" },
+        "target": { "properties": { "features": { "$ref": "#/definitions/features" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "deny" },
+        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "allow" },
+        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "contain" },
+        "target": { "properties": { "device": { "$ref": "#/definitions/device" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "allow" },
+        "target": { "properties": { "device": { "$ref": "#/definitions/device" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "remediate" },
+        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
+      }
+    }
+  ]
 }
