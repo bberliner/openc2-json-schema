@@ -65,7 +65,6 @@ class JsonSchemaTest {
             val value = reader.readValue()
             assertThat(problems).isEmpty()
             assertThat(value).isNotNull()
-            reader.close()
         }
     }
 
@@ -76,7 +75,6 @@ class JsonSchemaTest {
                 val value = reader.readValue()
                 assertThat(problems).isNotEmpty()
                 assertThat(value).isNotNull()
-                reader.close()
                 println("Input JSON: $value\n")
                 println("Has validation errors:")
                 service.createProblemPrinter(System.out::println).handleProblems(problems)
