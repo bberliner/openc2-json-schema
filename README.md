@@ -3,7 +3,7 @@
 
 ## Overview
 
-An open-source schema validator test suite and command-line tool for the OpenC2 _Command and Control_ language specification. From the [OpenC2 Language Spec](https://github.com/oasis-tcs/openc2-oc2ls/blob/working/oc2ls.md):
+An open-source JSON-Schema validator test suite and command-line tool for the OpenC2 _Command and Control_ language specification. From the [OpenC2 Language Spec](https://github.com/oasis-tcs/openc2-oc2ls/blob/working/oc2ls.md):
 
 > OpenC2 is a suite of specifications that enables command and control of cyber defense systems and components.  OpenC2 typically uses a request-response paradigm where a Command is encoded by a _Producer_ (managing application) and transferred to a _Consumer_ (managed device or virtualized function) using a secure transfer protocol. The Consumer can respond with status and any requested information.  The contents of both the _Command_ and the _Response_ are fully defined in schemas, allowing both parties to recognize the syntax constraints imposed on the exchange.
 
