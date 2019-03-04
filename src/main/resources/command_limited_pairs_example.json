@@ -9,6 +9,55 @@
     "target"
   ],
 
+  "properties": {
+    "action": { "$ref": "#/definitions/action" },
+    "target": { "$ref": "#/definitions/target" },
+    "args": { "$ref": "#/definitions/args" },
+    "actuator": { "$ref": "#/definitions/actuator" },
+    "command_id": { "$ref": "#/definitions/command" }
+  },
+  "additionalProperties": false,
+
+  "$comment": "EXAMPLE usage below of how one might use oneOf to limit a call to only a supported subset of action-target pairs",
+  "oneOf": [
+    {
+      "properties": {
+        "action": { "const": "query" },
+        "target": { "properties": { "features": { "$ref": "#/definitions/features" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "deny" },
+        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "allow" },
+        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "contain" },
+        "target": { "properties": { "device": { "$ref": "#/definitions/device" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "allow" },
+        "target": { "properties": { "device": { "$ref": "#/definitions/device" } } }
+      }
+    },
+    {
+      "properties": {
+        "action": { "const": "remediate" },
+        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
+      }
+    }
+  ],
+
   "definitions": {
     "action": {
       "title": "OpenC2 Action",
@@ -443,54 +492,5 @@
       "type": "string",
       "format": "iri"
     }
-  },
-
-  "properties": {
-    "action": { "$ref": "#/definitions/action" },
-    "target": { "$ref": "#/definitions/target" },
-    "args": { "$ref": "#/definitions/args" },
-    "actuator": { "$ref": "#/definitions/actuator" },
-    "command_id": { "$ref": "#/definitions/command" }
-  },
-  "additionalProperties": false,
-
-  "$comment": "EXAMPLE usage below of how one might use oneOf to limit a call to only a supported subset of action-target pairs",
-  "oneOf": [
-    {
-      "properties": {
-        "action": { "const": "query" },
-        "target": { "properties": { "features": { "$ref": "#/definitions/features" } } }
-      }
-    },
-    {
-      "properties": {
-        "action": { "const": "deny" },
-        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
-      }
-    },
-    {
-      "properties": {
-        "action": { "const": "allow" },
-        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
-      }
-    },
-    {
-      "properties": {
-        "action": { "const": "contain" },
-        "target": { "properties": { "device": { "$ref": "#/definitions/device" } } }
-      }
-    },
-    {
-      "properties": {
-        "action": { "const": "allow" },
-        "target": { "properties": { "device": { "$ref": "#/definitions/device" } } }
-      }
-    },
-    {
-      "properties": {
-        "action": { "const": "remediate" },
-        "target": { "properties": { "file": { "$ref": "#/definitions/file" } } }
-      }
-    }
-  ]
+  }
 }

@@ -9,6 +9,15 @@
     "target"
   ],
 
+  "properties": {
+    "action": { "$ref": "#/definitions/action" },
+    "target": { "$ref": "#/definitions/target" },
+    "args": { "$ref": "#/definitions/args" },
+    "actuator": { "$ref": "#/definitions/actuator" },
+    "command_id": { "$ref": "#/definitions/command" }
+  },
+  "additionalProperties": false,
+
   "definitions": {
     "action": {
       "title": "OpenC2 Action",
@@ -406,14 +415,5 @@
       "type": "string",
       "format": "iri"
     }
-  },
-
-  "properties": {
-    "action": { "$ref": "#/definitions/action" },
-    "target": { "$ref": "#/definitions/target" },
-    "args": { "$ref": "#/definitions/args" },
-    "actuator": { "$ref": "#/definitions/actuator" },
-    "command_id": { "$ref": "#/definitions/command" }
-  },
-  "additionalProperties": false
+  }
 }
