@@ -77,8 +77,7 @@ class JsonSchemaTest {
                 val value = reader.readValue()
                 assertThat(problems).isNotEmpty()
                 assertThat(value).isNotNull()
-                println("Input JSON: $value\n")
-                println("Has validation errors:")
+                println("File: '${file.name}' With JSON: '$value' Has Validation Errors:")
                 service.createProblemPrinter(System.out::println).handleProblems(problems)
             }
         } catch (e: Exception) {
