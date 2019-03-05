@@ -51,6 +51,8 @@ Adding the `-q` option will reduce the amount of output to a minimum and result 
 
 ```bash
 $ ./validate -q <path/to/your/command>.json
+$ echo $?
+0
 ```
 
 ### Examples
