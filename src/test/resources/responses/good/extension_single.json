@@ -1,0 +1,11 @@
+{
+  "status": 201,
+  "status_text": "Some description",
+  "x-mycompany": {
+    "kvps": {
+      "some": 100,
+      "values": [ true, false ],
+      "defined": "by the profile docs"
+    }
+  }
+}
