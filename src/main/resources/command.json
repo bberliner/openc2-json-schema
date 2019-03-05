@@ -401,8 +401,8 @@
         }
       },
       "patternProperties": {
-        "^x-[A-Za-z0-9_]*$": {
-          "$comment": "Non-OASIS extensions must start with x-",
+        "^x-[A-Za-z0-9_][A-Za-z0-9_]*:[A-Za-z0-9_][A-Za-z0-9_]*$": {
+          "$comment": "Non-OASIS target extensions must start with x- and be separated by a colon",
           "type": "object"
         }
       },
