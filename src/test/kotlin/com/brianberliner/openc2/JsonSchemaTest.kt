@@ -22,6 +22,7 @@ import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.leadpony.justify.api.JsonSchema
 import org.leadpony.justify.api.JsonValidationService
@@ -32,6 +33,7 @@ import java.nio.file.Paths
 import java.util.stream.Stream
 import javax.json.stream.JsonParsingException
 
+@Suppress("UNUSED_PARAMETER")
 class JsonSchemaTest {
 
     private val service = JsonValidationService.newInstance()
@@ -43,21 +45,21 @@ class JsonSchemaTest {
     @BeforeEach
     fun beforeTest() = problems.clear()
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{1}")
     @MethodSource("goodCommands")
-    fun `can validate good OpenC2 Commands`(file: File) = goodTester(commandSchema, file)
+    fun `can validate good OpenC2 Commands`(file: File, name: String) = goodTester(commandSchema, file)
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{1}")
     @MethodSource("badCommands")
-    fun `cannot validate bad OpenC2 Commands`(file: File) = badTester(commandSchema, file)
+    fun `cannot validate bad OpenC2 Commands`(file: File, name: String) = badTester(commandSchema, file)
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{1}")
     @MethodSource("goodResponses")
-    fun `can validate good OpenC2 Responses`(file: File) = goodTester(responseSchema, file)
+    fun `can validate good OpenC2 Responses`(file: File, name: String) = goodTester(responseSchema, file)
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{1}")
     @MethodSource("badResponses")
-    fun `cannot validate bad OpenC2 Responses`(file: File) = badTester(responseSchema, file)
+    fun `cannot validate bad OpenC2 Responses`(file: File, name: String) = badTester(responseSchema, file)
 
 
     private fun goodTester(schema: JsonSchema, file: File) {
@@ -88,18 +90,23 @@ class JsonSchemaTest {
 
     companion object {
         @JvmStatic
-        fun goodCommands(): Stream<File> = findJsonFilesUnder("commands/good").stream()
+        fun goodCommands(): Stream<Arguments> = findJsonFilesUnder("commands/good").stream()
 
         @JvmStatic
-        fun badCommands(): Stream<File> = findJsonFilesUnder("commands/bad").stream()
+        fun badCommands(): Stream<Arguments> = findJsonFilesUnder("commands/bad").stream()
 
         @JvmStatic
-        fun goodResponses(): Stream<File> = findJsonFilesUnder("responses/good").stream()
+        fun goodResponses(): Stream<Arguments> = findJsonFilesUnder("responses/good").stream()
 
         @JvmStatic
-        fun badResponses(): Stream<File> = findJsonFilesUnder("responses/bad").stream()
+        fun badResponses(): Stream<Arguments> = findJsonFilesUnder("responses/bad").stream()
 
         private fun findJsonFilesUnder(dir: String) =
-            File("src/test/resources/$dir").walkTopDown().filter { it.name.endsWith(".json") }.toList()
+            File("src/test/resources/$dir").walkTopDown().filter { it.name.endsWith(".json") }.map {
+                Arguments.of(
+                    it,
+                    it.name
+                )
+            }.toList()
     }
 }
