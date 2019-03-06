@@ -32,8 +32,7 @@
       "properties": {
         "slpf": {
           "title": "Actuator Specifiers defined in the Stateless Packet Filter profile",
-          "$comment": "To be pulled from SLPF spec and dropped into here",
-          "type": "object"
+          "$ref": "#/definitions/slpf_actuator"
         }
       },
       "patternProperties": {
@@ -72,7 +71,7 @@
         },
         "slpf": {
           "title": "Command Arguments defined in the Stateless Packet Filter profile",
-          "type": "object"
+          "$ref": "#/definitions/slpf_args"
         }
       },
       "patternProperties": {
@@ -85,8 +84,8 @@
     },
 
     "artifact": {
-      "type": "object",
       "title": "OpenC2 Artifact",
+      "type": "object",
       "properties": {
         "mime_type": {
           "$comment": "Why is this called mime_type when it is referencing a media-type RFC?",
@@ -115,6 +114,7 @@
     "device": {
       "title": "OpenC2 Device",
       "$comment": "Upgraded to require either a hostname or a device_id (or both), which is more useful",
+      "type": "object",
       "properties": {
         "hostname": {
           "title": "A hostname that can be used to connect to this device over a network",
@@ -165,6 +165,7 @@
     "file": {
       "title": "OpenC2 File",
       "$comment": "Upgraded to require any one of these (or more), which is more useful",
+      "type": "object",
       "properties": {
         "name": {
           "title": "The name of the file as defined in the file system",
@@ -186,6 +187,7 @@
     "hashes": {
       "title": "OpenC2 Hashes",
       "$comment": "Upgrade to require at least one of (the spec allows it to be empty, but that is not useful",
+      "type": "object",
       "properties": {
         "md5": {
           "title": "MD5 hash as defined in RFC 1321",
@@ -267,6 +269,7 @@
     "payload": {
       "title": "OpenC2 Payload",
       "$comment": "Why is this 'url' instead of 'uri'?",
+      "type": "object",
       "properties": {
         "bin": {
           "title": "Specifies the data contained in the artifact",
@@ -335,13 +338,80 @@
       }
     },
 
-    "slpf:rule_number": {
-      "title": "Rule identifier returned from allow or deny command.",
+    "slpf_actuator": {
+      "title": "The Actuator Specifiers defined for the slpf profile.",
+      "type": "object",
+      "properties": {
+        "hostname": {
+          "title": "RFC 1123 hostname (can be a domain name or IP address) for a particular device with SLPF functionality",
+          "$ref": "#/definitions/hostname"
+        },
+        "named_group": {
+          "title": "User defined collection of devices with SLPF functionality",
+          "type": "string"
+        },
+        "asset_id": {
+          "title": "Unique identifier for a particular SLPF",
+          "type": "string"
+        },
+        "asset_tuple": {
+          "title": "Unique tuple identifier for a particular SLPF consisting of a list of up to 10 strings",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "title": "SLPF Asset Tuple",
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 10
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "slpf_args": {
+      "title": "The Command Arguments defined for the slpf profile.",
+      "type": "object",
+      "properties": {
+        "drop_process": {
+          "title": "Specifies how to handle denied packets",
+          "$ref": "#/definitions/slpf_drop_process"
+        },
+        "running": {
+          "title": "Normal operations assumes any change to a device are to be implemented as persistent changes. Setting the running modifier to TRUE results in a change that is not persistent in the event of a reboot or restart.",
+          "type": "boolean"
+        },
+        "direction": {
+          "title": "Specifies whether to apply rules to incoming or outgoing traffic. If omitted, rules are applied to both.",
+          "$ref": "#/definitions/slpf_direction"
+        },
+        "insert_rule": {
+          "title": "Specifies the identifier of the rule within a list, typically used in a top-down rule list.",
+          "$ref": "#/definitions/slpf_rule_id"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "slpf_direction": {
+      "title": "The Command Arguments defined for the slpf profile.",
+      "type": "string",
+      "enum": ["ingress", "egress"]
+    },
+
+    "slpf_drop_process": {
+      "type": "string",
+      "enum": ["none", "reject", "false_ack"]
+    },
+
+    "slpf_rule_id": {
+      "title": "Access rule identifier",
       "type": "integer"
     },
 
     "target": {
       "title": "OpenC2 Target",
+      "type": "object",
       "properties": {
         "artifact": {
           "title": "An array of bytes representing a file-like object or a link to that object.",
@@ -397,7 +467,7 @@
         },
         "slpf:rule_number": {
           "title": "Immutable identifier assigned when a rule is created, Identifies a rule to be deleted.",
-          "$ref": "#/definitions/slpf:rule_number"
+          "$ref": "#/definitions/slpf_rule_id"
         }
       },
       "patternProperties": {

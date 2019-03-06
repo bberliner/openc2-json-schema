@@ -96,7 +96,7 @@
     },
     "slpf": {
       "title": "Response types defined in the Stateless Packet Filter profile",
-      "type": "object"
+      "$ref": "#/definitions/slpf_response"
     }
   },
 
@@ -106,5 +106,25 @@
       "type": "object"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+
+  "definitions": {
+    "slpf_response": {
+      "title": "The OpenC2 Response defined for the slpf profile.",
+      "type": "object",
+      "properties": {
+        "rule_number": {
+          "title": "Rule identifier returned from allow or deny Command.",
+          "$ref": "#/definitions/slpf_rule_id"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "slpf_rule_id": {
+      "title": "Access rule identifier",
+      "type": "integer"
+    }
+  }
+
 }
