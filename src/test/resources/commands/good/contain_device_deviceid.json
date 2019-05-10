@@ -1,10 +1,8 @@
 {
-  "action": "deny",
+  "action": "contain",
   "target": {
-    "file": {
-      "hashes": {
-        "sha256": "22fe72a34f006ea67d26bb7004e2b6941b5c3953d43ae7ec24d41b1a928a6973"
-      }
+    "device": {
+      "device_id": "9BCE8431AC106FAA3861C7E771D20E53"
     }
   }
 }

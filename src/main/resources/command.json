@@ -186,7 +186,7 @@
 
     "hashes": {
       "title": "OpenC2 Hashes",
-      "$comment": "Upgrade to require at least one of (the spec allows it to be empty, but that is not useful",
+      "$comment": "Upgrade to require at least one of (the spec allows it to be empty, but that is not useful)",
       "type": "object",
       "properties": {
         "md5": {
