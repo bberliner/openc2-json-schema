@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://oasis-open.org/openc2/v1.0/ls-command.json",
-  "title": "The OpenC2 1.0 Language Spec Command Schema",
-
+  "$id": "https://oasis-open.org/openc2/v1.0/command.json",
+  "title": "The OASIS OpenC2 1.0 Language Spec Command Schema",
   "type": "object",
+
   "required": [
     "action",
     "target"
@@ -14,20 +14,43 @@
     "target": { "$ref": "#/definitions/target" },
     "args": { "$ref": "#/definitions/args" },
     "actuator": { "$ref": "#/definitions/actuator" },
-    "command_id": { "$ref": "#/definitions/command" }
+    "command_id": { "$ref": "#/definitions/command_id" }
   },
   "additionalProperties": false,
 
   "definitions": {
+
     "action": {
       "title": "OpenC2 Action",
-      "$comment": "Could use oneOf with const instead of enum to have titles on each item (see example)",
+      "$comment": "Could use oneOf with const instead of enum to have titles on each item, but enum here is more concise",
       "type": "string",
-      "enum": ["scan", "locate", "query", "deny", "contain", "allow", "start", "stop", "restart", "cancel", "set", "update", "redirect", "create", "delete", "detonate", "restore", "copy", "investigate", "remediate"]
+      "enum": [
+        "scan",
+        "locate",
+        "query",
+        "deny",
+        "contain",
+        "allow",
+        "start",
+        "stop",
+        "restart",
+        "cancel",
+        "set",
+        "update",
+        "redirect",
+        "create",
+        "delete",
+        "detonate",
+        "restore",
+        "copy",
+        "investigate",
+        "remediate"
+      ]
     },
 
     "actuator": {
       "title": "OpenC2 Actuator",
+      "$comment": "We disallow an empty actuator specified here using minProperties setting, though spec is unclear about that; Also, spec wants only a single actuator key included, but we allow many (which is needed)",
       "type": "object",
       "properties": {
         "slpf": {
@@ -41,6 +64,7 @@
           "type": "object"
         }
       },
+      "minProperties": 1,
       "additionalProperties": false
     },
 
@@ -67,7 +91,12 @@
           "title": "The type of Response required for the Action",
           "$comment": "Could use oneOf with const instead of enum to have titles on each item (see example)",
           "type": "string",
-          "enum": ["none", "ack", "status", "complete"]
+          "enum": [
+            "none",
+            "ack",
+            "status",
+            "complete"
+          ]
         },
         "slpf": {
           "title": "Command Arguments defined in the Stateless Packet Filter profile",
@@ -92,8 +121,12 @@
           "title": "Permitted values specified in the IANA Media Types registry, RFC 6838",
           "type": "string"
         },
-        "payload": { "$ref": "#/definitions/payload" },
-        "hashes": { "$ref": "#/definitions/hashes" }
+        "payload": {
+          "$ref": "#/definitions/payload"
+        },
+        "hashes": {
+          "$ref": "#/definitions/hashes"
+        }
       },
       "additionalProperties": false
     },
@@ -105,7 +138,7 @@
       "contentEncoding": "base64"
     },
 
-    "command": {
+    "command_id": {
       "title": "OpenC2 Command Identifier",
       "$comment": "Could add minimum and maximum length validators here, or a format regex to check for uuid",
       "type": "string"
@@ -120,34 +153,47 @@
           "title": "A hostname that can be used to connect to this device over a network",
           "$ref": "#/definitions/hostname"
         },
-        "description": {
-          "title": "A human-readable description of the purpose, relevance, and/or properties of this device",
-          "type": "string"
+        "idn_hostname": {
+          "title": "An internationalized hostname that can be used to connect to this device over a network",
+          "$ref": "#/definitions/idn_hostname"
         },
         "device_id": {
           "title": "An identifier that refers to this device within an inventory or management system",
           "type": "string"
         }
       },
-      "additionalProperties": false,
-      "anyOf": [
-        { "required": ["hostname"] },
-        { "required": ["device_id"] }
-      ]
+      "minProperties": 1,
+      "additionalProperties": false
     },
 
     "domain_name": {
       "title": "RFC 1034, section 3.5",
-      "$comment": "Upgraded to RFC5890 to support internationalized hostname",
       "type": "string",
-      "format": "idn-hostname"
+      "format": "hostname"
     },
 
     "email_addr": {
       "title": "Email address",
-      "$comment": "Upgraded to validate using email format in RFC5322 and internationalized email in RFC6531",
+      "type": "string",
+      "format": "email"
+    },
+
+    "idn_domain_name": {
+      "title": "Internationalized Domain Name, [RFC5890], Section 2.3.2.3.",
+      "type": "string",
+      "format": "idn-hostname"
+    },
+
+    "idn_email_addr": {
+      "title": "Internationalized email address, [RFC6531]",
       "type": "string",
       "format": "idn-email"
+    },
+
+    "idn_hostname": {
+      "title": "Internationalized Internet host name as specified in [RFC5890], Section 2.3.2.3.",
+      "type": "string",
+      "format": "idn-hostname"
     },
 
     "features": {
@@ -158,7 +204,12 @@
       "items": {
         "title": "OpenC2 Features items",
         "type": "string",
-        "enum": ["versions", "profiles", "pairs", "rate_limit"]
+        "enum": [
+          "versions",
+          "profiles",
+          "pairs",
+          "rate_limit"
+        ]
       }
     },
 
@@ -208,36 +259,40 @@
 
     "hostname": {
       "title": "A legal Internet host name as specified in RFC 1123",
-      "$comment": "Upgraded to RFC5890 to support internationalized hostname (which is RFC 1034 compliant and more appropriate)",
       "type": "string",
-      "format": "idn-hostname"
+      "format": "hostname"
     },
 
-    "ip_addr": {
-      "title": "32 bit IPv4 address or 128 bit IPv6 address",
-      "$comment": "Upgraded to be a string matching either standard ipv4 or ipv6 notation",
-      "oneOf": [
-        { "type": "string", "format": "ipv4"},
-        { "type": "string", "format": "ipv6"}
-      ]
+    "ipv4_net": {
+      "title": "An IPv4 address range including CIDR prefix length.",
+      "$comment": "JSON Schema appears not to have built-in support for matching IPv4 addr with CIDR, so using custom regex here",
+      "type": "string",
+      "format": "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\\/(\\d|[12]\\d|3[01]))?$"
     },
 
-    "ip_connection": {
-      "title": "OpenC2 IP Connection",
-      "$comment": "Upgrade to require at least one property; TODO - Add if statement for: src_addr and dst_addr MUST be the same version (ipv4 or ipv6) if both are present.",
+    "ipv6_net": {
+      "title": "An IPv6 address range including prefix length.",
+      "$comment": "JSON Schema appears not to have built-in support for matching IPv6 addr with prefix length, so using custom regex here",
+      "type": "string",
+      "format": "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(\\/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
+    },
+
+    "ipv4_connection": {
+      "title": "OpenC2 IPv4 Connection",
+      "$comment": "Should require one or both of src_addr or dst_addr; TODO - Add if statement for that.",
       "type": "object",
       "properties": {
         "src_addr": {
-          "title": "ip_addr of source, could be ipv4 or ipv6 - see ip_addr section",
-          "$ref": "#/definitions/ip_addr"
+          "title": "IPv4 source address range",
+          "$ref": "#/definitions/ipv4_net"
         },
         "src_port": {
           "title": "source service per RFC 6335",
           "$ref": "#/definitions/port"
         },
         "dst_addr": {
-          "title": "ip_addr of destination, could be ipv4 or ipv6 - see ip_addr section",
-          "$ref": "#/definitions/ip_addr"
+          "title": "IPv4 destination address range",
+          "$ref": "#/definitions/ipv4_net"
         },
         "dst_port": {
           "title": "destination service per RFC 6335",
@@ -252,11 +307,53 @@
       "additionalProperties": false
     },
 
+    "ipv6_connection": {
+      "title": "OpenC2 IPv6 Connection",
+      "$comment": "Should require one or both of src_addr or dst_addr; TODO - Add if statement for that.",
+      "type": "object",
+      "properties": {
+        "src_addr": {
+          "title": "IPv6 source address range",
+          "$ref": "#/definitions/ipv6_net"
+        },
+        "src_port": {
+          "title": "source service per RFC 6335",
+          "$ref": "#/definitions/port"
+        },
+        "dst_addr": {
+          "title": "IPv6 destination address range",
+          "$ref": "#/definitions/ipv6_net"
+        },
+        "dst_port": {
+          "title": "destination service per RFC 6335",
+          "$ref": "#/definitions/port"
+        },
+        "protocol": {
+          "title": "layer 4 protocol (e.g., TCP) - see l4_protocol section",
+          "$ref": "#/definitions/l4_protocol"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
+
+    "iri": {
+      "title": "OpenC2 IRI - An internationalized resource identifier (IRI).",
+      "$comment": "Should this include relative-reference URI's as well, using uri-reference format?",
+      "type": "string",
+      "format": "iri"
+    },
+
     "l4_protocol": {
       "title": "Value of the protocol (IPv4) or next header (IPv6) field in an IP packet. Any IANA value, RFC 5237",
       "$comment": "Could use oneOf with const instead of enum to have titles on each item (see example)",
       "type": "string",
-      "enum": ["icmp", "tcp", "udp", "sctp"]
+      "enum": [
+        "icmp",
+        "tcp",
+        "udp",
+        "sctp"
+      ]
     },
 
     "mac_addr": {
@@ -377,8 +474,8 @@
           "title": "Specifies how to handle denied packets",
           "$ref": "#/definitions/slpf_drop_process"
         },
-        "running": {
-          "title": "Normal operations assumes any change to a device are to be implemented as persistent changes. Setting the running modifier to TRUE results in a change that is not persistent in the event of a reboot or restart.",
+        "persistent": {
+          "title": "Normal operations assume any changes to a device are to be implemented persistently. Setting the persistent modifier to FALSE results in a change that is not persistent in the event of a reboot or restart",
           "type": "boolean"
         },
         "direction": {
@@ -396,12 +493,20 @@
     "slpf_direction": {
       "title": "The Command Arguments defined for the slpf profile.",
       "type": "string",
-      "enum": ["ingress", "egress"]
+      "enum": [
+        "both",
+        "ingress",
+        "egress"
+      ]
     },
 
     "slpf_drop_process": {
       "type": "string",
-      "enum": ["none", "reject", "false_ack"]
+      "enum": [
+        "none",
+        "reject",
+        "false_ack"
+      ]
     },
 
     "slpf_rule_id": {
@@ -419,7 +524,7 @@
         },
         "command": {
           "title": "A reference to a previously issued Command.",
-          "$ref": "#/definitions/command"
+          "$ref": "#/definitions/command_id"
         },
         "device": {
           "title": "The properties of a hardware device.",
@@ -441,13 +546,33 @@
           "title": "Properties of a file.",
           "$ref": "#/definitions/file"
         },
-        "ip_addr": {
-          "title": "An IP address (either version 4 or version 6).",
-          "$ref": "#/definitions/ip_addr"
+        "idn_domain_name": {
+          "title": "An internationalized domain name.",
+          "$ref": "#/definitions/idn_domain_name"
         },
-        "ip_connection": {
-          "title": "A network connection that originates from a source and is addressed to a destination. Source and destination addresses may be either IPv4 or IPv6; both should be the same version",
-          "$ref": "#/definitions/ip_connection"
+        "idn_email_addr": {
+          "title": "A single internationalized email address.",
+          "$ref": "#/definitions/idn_email_addr"
+        },
+        "ipv4_connection": {
+          "title": "A 5-tuple of source and destination IPv4 address ranges, source and destination ports, and protocol",
+          "$ref": "#/definitions/ipv4_connection"
+        },
+        "ipv6_connection": {
+          "title": "A 5-tuple of source and destination IPv6 address ranges, source and destination ports, and protocol",
+          "$ref": "#/definitions/ipv6_connection"
+        },
+        "ipv4_net": {
+          "title": "An IPv4 address range including CIDR prefix length.",
+          "$ref": "#/definitions/ipv4_net"
+        },
+        "ipv6_net": {
+          "title": "An IPv6 address range including prefix length.",
+          "$ref": "#/definitions/ipv6_net"
+        },
+        "iri": {
+          "title": "An internationalized resource identifier (IRI).",
+          "$ref": "#/definitions/uri"
         },
         "mac_addr": {
           "title": "A Media Access Control (MAC) address - EUI-48 or EUI-64",
@@ -483,9 +608,10 @@
 
     "uri": {
       "title": "OpenC2 URI",
-      "$comment": "Upgraded this to IRI spec RFC3987 to support internationalized URIs",
+      "$comment": "Should this include relative-reference URI's as well, using uri-reference format?",
       "type": "string",
-      "format": "iri"
+      "format": "uri"
     }
   }
+
 }

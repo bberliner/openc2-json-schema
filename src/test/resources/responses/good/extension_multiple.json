@@ -1,14 +1,19 @@
 {
   "status": 201,
   "status_text": "Some description",
-  "x-mycompany": {
-    "kvps": {
-      "some": 100,
-      "values": [ true, false ],
-      "defined": "by the profile docs"
+  "results": {
+    "x-mycompany": {
+      "stuff": {
+        "some": 100,
+        "values": [
+          true,
+          false
+        ],
+        "defined": "by the profile docs"
+      }
+    },
+    "x-acme": {
+      "status_detail": "this profile defines additional status info for each response"
     }
-  },
-  "x-acme": {
-    "status_detail": "this profile defines additional status info for each response"
   }
 }

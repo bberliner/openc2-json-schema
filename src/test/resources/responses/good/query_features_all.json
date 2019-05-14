@@ -1,28 +1,30 @@
 {
   "status": 200,
   "status_text": "OK",
-  "versions": [
-    "1.0-draft-2019-02"
-  ],
-  "profiles": [
-    "x-myextension"
-  ],
-  "pairs": {
-    "query": [
-      "features"
+  "results": {
+    "versions": [
+      "1.0-draft-2019-02"
     ],
-    "deny": [
-      "file"
+    "profiles": [
+      "x-myextension"
     ],
-    "allow": [
-      "file",
-      "device"
-    ],
-    "remediate": [
-      "file"
-    ],
-    "contain": [
-      "device"
-    ]
+    "pairs": {
+      "query": [
+        "features"
+      ],
+      "deny": [
+        "file"
+      ],
+      "allow": [
+        "file",
+        "device"
+      ],
+      "remediate": [
+        "file"
+      ],
+      "contain": [
+        "device"
+      ]
+    }
   }
 }

@@ -1,60 +1,101 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://oasis-open.org/openc2/v1.0/ls-response.json",
-  "title": "The OpenC2 1.0 Language Spec Response Schema",
-
+  "$id": "https://oasis-open.org/openc2/v1.0/response.json",
+  "title": "The OASIS OpenC2 1.0 Language Spec Response Schema",
   "type": "object",
+
   "required": [
     "status"
   ],
 
   "properties": {
-    "status": {
-      "title": "An integer status code",
-      "type": "integer",
-      "minimum": 100,
-      "maximum": 599
+    "status": { "$ref": "#/definitions/status" },
+    "status_text": { "$ref": "#/definitions/status_text" },
+    "results": { "$ref": "#/definitions/results" }
+  },
+  "additionalProperties": false,
+
+  "definitions": {
+
+    "pairs": {
+      "title": "List of targets applicable to each supported Action",
+      "type": "object",
+      "patternProperties": {
+        "^scan$|^locate$|^query$|^deny$|^contain$|^allow$|^start$|^stop$|^restart$|^cancel$|^set$|^update$|^redirect$|^create$|^delete$|^detonate$|^restore$|^copy$|^investigate$|^remediate$": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "title": "OpenC2 pairs target items",
+            "type": "string",
+            "enum": [
+              "artifact",
+              "command",
+              "device",
+              "domain_name",
+              "email_addr",
+              "idn_domain_name",
+              "idn_email_addr",
+              "features",
+              "file",
+              "ipv4_connection",
+              "ipv6_connection",
+              "ipv4_net",
+              "ipv6_net",
+              "iri",
+              "mac_addr",
+              "process",
+              "properties",
+              "uri",
+              "slpf:rule_number"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
     },
-    "status_text": {
-      "title": "A free-form human-readable description of the Response status",
-      "type": "string"
+
+    "results": {
+      "title": "Map of key:value pairs that contain additional results based on the invoking Command.",
+      "type": "object",
+      "properties": {
+        "versions": {
+          "title": "List of OpenC2 language versions supported by this Actuator",
+          "type": "array",
+          "items": {
+            "title": "OpenC2 version items",
+            "type": "string"
+          }
+        },
+        "profiles": {
+          "title": "List of profiles supported by this Actuator",
+          "type": "array",
+          "items": {
+            "title": "OpenC2 profile items",
+            "type": "string"
+          }
+        },
+        "schema": { "$ref": "#/definitions/schema" },
+        "pairs": { "$ref": "#/definitions/pairs" },
+        "rate_limit": {
+          "title": "Maximum number of requests per minute supported by design or policy",
+          "type": "number",
+          "minimum": 0
+        },
+        "slpf": {
+          "title": "Response types defined in the Stateless Packet Filter profile",
+          "$ref": "#/definitions/slpf_response"
+        }
+      },
+      "patternProperties": {
+        "^x-[A-Za-z0-9_]*$": {
+          "$comment": "Non-OASIS extensions must start with x-",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
     },
-    "strings": {
-      "title": "Generic set of string values",
-      "type": "array",
-      "items": {
-        "title": "Generic strings response array",
-        "type": "string"
-      }
-    },
-    "ints": {
-      "title": "Generic set of integer values",
-      "type": "array",
-      "items": {
-        "title": "Generic integers response array",
-        "type": "integer"
-      }
-    },
-    "kvps": {
-      "title": "Generic set of key:value pairs",
-      "type": "object"
-    },
-    "versions": {
-      "title": "List of OpenC2 language versions supported by this Actuator",
-      "type": "array",
-      "items": {
-        "title": "OpenC2 version items",
-        "type": "string"
-      }
-    },
-    "profiles": {
-      "title": "List of profiles supported by this Actuator",
-      "type": "array",
-      "items": {
-        "title": "OpenC2 profile items",
-        "type": "string"
-      }
-    },
+
     "schema": {
       "title": "JSON-Schema for the supported OpenC2 Command and Response messages",
       "type": "object",
@@ -72,43 +113,7 @@
       },
       "additionalProperties": false
     },
-    "pairs": {
-      "title": "List of targets applicable to each supported Action",
-      "type": "object",
-      "patternProperties": {
-        "^scan$|^locate$|^query$|^deny$|^contain$|^allow$|^start$|^stop$|^restart$|^cancel$|^set$|^update$|^redirect$|^create$|^delete$|^detonate$|^restore$|^copy$|^investigate$|^remediate$": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "title": "OpenC2 pairs target items",
-            "type": "string",
-            "enum": ["artifact", "command", "device", "domain_name", "email_addr", "features", "file", "ip_addr", "ip_connection", "mac_addr", "process", "properties", "uri", "slpf:rule_number"]
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    "rate_limit": {
-      "title": "Maximum number of requests per minute supported by design or policy",
-      "type": "number",
-      "minimum": 0
-    },
-    "slpf": {
-      "title": "Response types defined in the Stateless Packet Filter profile",
-      "$ref": "#/definitions/slpf_response"
-    }
-  },
 
-  "patternProperties": {
-    "^x-[A-Za-z0-9_]*$": {
-      "$comment": "Non-OASIS extensions must start with x-",
-      "type": "object"
-    }
-  },
-  "additionalProperties": false,
-
-  "definitions": {
     "slpf_response": {
       "title": "The OpenC2 Response defined for the slpf profile.",
       "type": "object",
@@ -124,6 +129,18 @@
     "slpf_rule_id": {
       "title": "Access rule identifier",
       "type": "integer"
+    },
+
+    "status": {
+      "title": "An integer status code",
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+
+    "status_text": {
+      "title": "A free-form human-readable description of the Response status",
+      "type": "string"
     }
   }
 
