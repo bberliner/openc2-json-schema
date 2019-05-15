@@ -72,7 +72,8 @@
           "type": "array",
           "items": {
             "title": "OpenC2 profile items",
-            "type": "string"
+            "type": "string",
+            "pattern": "^slpf$|^x-[A-Za-z0-9_]*$"
           }
         },
         "schema": { "$ref": "#/definitions/schema" },
