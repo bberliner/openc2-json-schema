@@ -16,10 +16,11 @@
 
 package com.brianberliner.openc2
 
+import assertk.Assert
 import assertk.assertThat
 import assertk.assertions.isEmpty
-import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
+import assertk.assertions.support.expected
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -70,12 +71,16 @@ class JsonSchemaTest {
         }
     }
 
+    private fun Assert<List<Problem>>.hasProblems() = given { actual ->
+        if (actual.isNotEmpty()) return
+        expected("JSON to not be valid, but it validated successfully")
+    }
 
     private fun badTester(schema: JsonSchema, file: File) {
         try {
             service.createReader(file.inputStream(), schema, handler).use { reader ->
                 val value = reader.readValue()
-                assertThat(problems).isNotEmpty()
+                assertThat(problems).hasProblems()
                 assertThat(value).isNotNull()
                 println("File: '${file.name}' With JSON: '$value' Has Validation Errors:")
                 service.createProblemPrinter(System.out::println).handleProblems(problems)
@@ -101,11 +106,11 @@ class JsonSchemaTest {
         fun badResponses(): Stream<Arguments> = findJsonFilesUnder("responses/bad").stream()
 
         private fun findJsonFilesUnder(dir: String) =
-            File("src/test/resources/$dir").walkTopDown().filter { it.name.endsWith(".json") }.map {
-                Arguments.of(
-                    it,
-                    it.name
-                )
-            }.toList()
+                File("src/test/resources/$dir").walkTopDown().filter { it.name.endsWith(".json") }.map {
+                    Arguments.of(
+                            it,
+                            it.name
+                    )
+                }.toList()
     }
 }
