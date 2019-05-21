@@ -66,14 +66,9 @@ class JsonSchemaTest {
     private fun goodTester(schema: JsonSchema, file: File) {
         service.createReader(file.inputStream(), schema, handler).use { reader ->
             val value = reader.readValue()
-            assertThat(problems).isEmpty()
+            assertThat(problems).isValid()
             assertThat(value).isNotNull()
         }
-    }
-
-    private fun Assert<List<Problem>>.hasProblems() = given { actual ->
-        if (actual.isNotEmpty()) return
-        expected("JSON to not be valid, but it validated successfully")
     }
 
     private fun badTester(schema: JsonSchema, file: File) {
