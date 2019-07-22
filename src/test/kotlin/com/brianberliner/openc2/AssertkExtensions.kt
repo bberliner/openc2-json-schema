@@ -22,7 +22,8 @@ import org.leadpony.justify.api.Problem
 
 fun Assert<List<Problem>>.isValid() = given { actual ->
     if (actual.isEmpty()) return
-    expected("JSON to be valid, but it did not validate successfully\nErrors:\n$actual")
+    actual.forEach { println(it.printProblem()) }
+    expected("JSON to be valid, but it did not validate successfully:\n$actual.")
 }
 
 fun Assert<List<Problem>>.hasProblems() = given { actual ->
