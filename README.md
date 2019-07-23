@@ -16,13 +16,10 @@ The latest working version of the spec, which was used to create the JSON-Schema
 This repository provides the following features:
 
 * A [JSON-Schema (draft 07)](https://json-schema.org/specification.html) representation of an OpenC2 Command and an OpenC2 Response, along with custom schema validation rules. Using JSON-Schema is a standard way of describing API requests and responses and has become quite popular. JSON-Schema supports validation using a [wide variety of programming languages](https://json-schema.org/implementations.html#validators). Many of these schema validators produce excellent error messages that are suitable for return to the callers which can be helpful getting implementations up-and-running as soon as possible. Further, these JSON-Schema definition files can be used as a basis for creating a full [OpenAPI](https://github.com/OAI/OpenAPI-Specification) compliant specification as well.
-
-* A command-line app, written in Kotlin, that can be used to validate if an OpenC2 Command or OpenC2 Response is valid.
-
-* A full automated test suite that supports positive and negative tests for checking example OpenC2 Commands and Responses against the included JSON-Schema. This repository accepts pull requests, so it's easy for anyone to add more example Commands and Responses to the test suite or to extend the validation rules. As such, this repository could become an authoritative (and exhaustive) collection of examples for how OpenC2 can be used in the wild.
-
+* **NOTE**: This repository also holds community contributions of other JSON-Schema interpretations of the OpenC2 Specification. These can be found in the *src/main/resources/contrib* directory.
+* A command-line app, written in Kotlin, that can be used to validate if an OpenC2 Command or OpenC2 Response JSON payload is valid, and if not valid, where exactly to find the error.
+* A full automated test suite that supports positive and negative tests for checking example OpenC2 Commands and Responses against the included JSON-Schema. This repository accepts pull requests, so it's easy for anyone to add more example Commands and Responses to the test suite or to extend the validation rules. As such, this repository could become an authoritative (and exhaustive) collection of examples for how OpenC2 can be used in the wild. We currently have over 170 examples in the test suite (contributions enthusiastically accepted!).
 * An example for how JSON-Schema can be used with a standard like OpenC2 and how one might use it to clearly communicate the required fields and types (and complex schema validation rules) of an API. At some point, we could use the JSON-Schema provided in this repository as the basis for publishing an official [OpenAPI](https://www.openapis.org/) description of the OpenC2 standard.
-
 * An example for "**Getting Started**" with a Kotlin project that supports Gradle, the Gradle Kotlin DSL, a command-line app with argument parsing, and an automated Unit Test suite using JUnit5.
 
 ## Usage
@@ -49,7 +46,12 @@ The two previous examples use the compiled-in versions of the JSON-Schema specif
 $ ./validate -s <path/to/your/schema>.json <path/to/your/whatever>.json
 ```
 
-As such, this command-line tool can be used to validate any generic JSON file using your custom JSON-Schema.
+As such, this command-line tool can be used to validate any generic JSON file using your custom JSON-Schema. This makes it easy to test your examples against any of the community contributed versions in the *src/main/resources/contrib* directory using a command like:
+
+```bash
+$ ./validate -s src/main/resources/contrib/oc2ls-v1.0-wd14_update.json <path/to/your/whatever>.json
+```
+
 
 Adding the `-q` option will reduce the amount of output to a minimum and result in the number of failed files being returned as the exit status (handy for use in scripts):
 
@@ -96,39 +98,36 @@ query_features_all.json: PASS
 SUMMARY: PASS=1 FAIL=0
 ```
 
-Using a custom schema to validate a Command (this example gives a more verbose error message, since it uses `const` instead of `enum` in the JSON-Schema definitions **AND** is limited to only certain action/target pairs as being valid):
+Using a community contributed schema to validate a Command:
 
 ```bash
-$ ./validate -s src/main/resources/command_limited_pairs_example.json src/test/resources/commands/bad/action_unknown.json 
+$ ./validate -s src/main/resources/contrib/oc2ls-v1.0-wd14_update.json src/test/resources/commands/bad/action_unknown.json
 action_unknown.json: FAIL
 Exactly one of the following sets of problems must be resolved.
-1) [line:2,column:21] The value must be constant string "scan".
-2) [line:2,column:21] The value must be constant string "locate".
-3) [line:2,column:21] The value must be constant string "query".
-4) [line:2,column:21] The value must be constant string "deny".
-5) [line:2,column:21] The value must be constant string "contain".
-6) [line:2,column:21] The value must be constant string "allow".
-7) [line:2,column:21] The value must be constant string "start".
-8) [line:2,column:21] The value must be constant string "stop".
-9) [line:2,column:21] The value must be constant string "restart".
-10) [line:2,column:21] The value must be constant string "cancel".
-11) [line:2,column:21] The value must be constant string "set".
-12) [line:2,column:21] The value must be constant string "update".
-13) [line:2,column:21] The value must be constant string "redirect".
-14) [line:2,column:21] The value must be constant string "create".
-15) [line:2,column:21] The value must be constant string "delete".
-16) [line:2,column:21] The value must be constant string "detonate".
-17) [line:2,column:21] The value must be constant string "restore".
-18) [line:2,column:21] The value must be constant string "copy".
-19) [line:2,column:21] The value must be constant string "investigate".
-20) [line:2,column:21] The value must be constant string "remediate".
-Exactly one of the following sets of problems must be resolved.
-1) [line:2,column:21] The value must be constant string "query".
-2) [line:2,column:21] The value must be constant string "deny".
-3) [line:2,column:21] The value must be constant string "allow".
-4) [line:2,column:21] The value must be constant string "contain".
-5) [line:2,column:21] The value must be constant string "allow".
-6) [line:2,column:21] The value must be constant string "remediate".
+1) Exactly one of the following sets of problems must be resolved.
+   1) [2,21][/action] The value must be constant string "scan".
+   2) [2,21][/action] The value must be constant string "locate".
+   3) [2,21][/action] The value must be constant string "query".
+   4) [2,21][/action] The value must be constant string "deny".
+   5) [2,21][/action] The value must be constant string "contain".
+   6) [2,21][/action] The value must be constant string "allow".
+   7) [2,21][/action] The value must be constant string "start".
+   8) [2,21][/action] The value must be constant string "stop".
+   9) [2,21][/action] The value must be constant string "restart".
+   10) [2,21][/action] The value must be constant string "cancel".
+   11) [2,21][/action] The value must be constant string "set".
+   12) [2,21][/action] The value must be constant string "update".
+   13) [2,21][/action] The value must be constant string "redirect".
+   14) [2,21][/action] The value must be constant string "create".
+   15) [2,21][/action] The value must be constant string "delete".
+   16) [2,21][/action] The value must be constant string "detonate".
+   17) [2,21][/action] The value must be constant string "restore".
+   18) [2,21][/action] The value must be constant string "copy".
+   19) [2,21][/action] The value must be constant string "investigate".
+   20) [2,21][/action] The value must be constant string "remediate".
+2) [2,21][/action] The object must not have a property whose name is "action".
+   [3,13][/target] The object must not have a property whose name is "target".
+   [6,1][] The object must have a property whose name is "status".
 SUMMARY: PASS=0 FAIL=1
 ```
 
@@ -156,6 +155,8 @@ BUILD SUCCESSFUL in 12s
 
 The test suite is built to validate all the Command or Response JSON files that are stored in the `src/test/resources` directory. As such, simply adding a file, which must end in `.json` to the proper place in that hierarchy (any of `commands/good`, `commands/bad`, `responses/good`, or `responses/bad`) will be enough to have the file included automatically; no code changes required. Just re-run the tests as described above.
 
+> NOTE: It is possible to run the test suite against the various community contributed schema definition files in the src/main/resources/contrib directory, but you will have to make slight modifications to the JsonSchemaTest file to do so. There is an example section in that file that is currently commented out showing how this might be done.
+
 ### JSON-Schema Definitions
 
 The JSON-Schema definitions can be found in the `src/main/resources/command.json` file for an OpenC2 Command object, or in the `src/main/resources/response.json` file for an OpenC2 Response object. While this repository is written etirely in Kotlin, there are many implementations that support [JSON-Schema (draft 07)](https://json-schema.org/implementations.html) in many different programming languages, including **.NET**, **C++**, **Go**, **Java**, **Kotlin**, **JavaScript**, **PHP**, **Python**, **Ruby**, and **Objective-C**. So, these definition files, being based on the JSON-Schema standard, can be used directly in whatever implementation using whatever language you prefer for your use case (as long as they support the 07 draft of the spec).
@@ -174,7 +175,7 @@ Bottom line: The Spec Is The Spec. This is just one man's interpretation of said
 
 ## Contributing
 
-Pull requests are welcome and encouraged. Please add example OpenC2 Commands and Responses to the test suite area, as having a wide collection of example JSON will help implementors of the specification. Also, please review the JSON-Schema and suggest ways that it can be improved (restructured) or have more/better validation rules applied.
+Pull requests are welcome and encouraged. Please add example OpenC2 Commands and Responses to the test suite area, as having a wide collection of example JSON will help implementors of the specification. Also, please review the JSON-Schema and suggest ways that it can be improved (restructured) or have more/better validation rules applied. Community contributions of JSON-Schema definitions for additional OpenC2 Actuator Profiles can be added directly to the *src/main/resources/contrib* directory for the fastest path to pull request acceptance.
 
 All contributions will be considered to be public domain and brought under the same licensing as the rest of this project once your pull request is accepted.
 
