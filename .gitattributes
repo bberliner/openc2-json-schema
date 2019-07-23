@@ -1,4 +1,4 @@
 *.kt linguist-language=Kotlin
 *.kts linguist-language=Kotlin
-*.json linguist-language=Kotlin
-/src/test/resources/** linguist-language=Kotlin
+*.json linguist-vendored
+*.html linguist-vendored
