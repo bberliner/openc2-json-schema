@@ -1,0 +1,2 @@
+*.kt linguist-language=Kotlin
+*.json linguist-language=Kotlin
