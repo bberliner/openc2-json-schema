@@ -51,29 +51,29 @@ class JsonSchemaTest {
     @BeforeEach
     fun beforeTest() = problems.clear()
 
-//    @ParameterizedTest(name = "{1}")
-//    @MethodSource("goodCommands")
-//    fun `can validate good OpenC2 Commands`(file: File, name: String) {
-//        goodTester(commandSchema, file)
-//    }
-//
-//    @ParameterizedTest(name = "{1}")
-//    @MethodSource("badCommands")
-//    fun `cannot validate bad OpenC2 Commands`(file: File, name: String) {
-//        badTester(commandSchema, file)
-//    }
-//
-//    @ParameterizedTest(name = "{1}")
-//    @MethodSource("goodResponses")
-//    fun `can validate good OpenC2 Responses`(file: File, name: String) {
-//        goodTester(responseSchema, file)
-//    }
-//
-//    @ParameterizedTest(name = "{1}")
-//    @MethodSource("badResponses")
-//    fun `cannot validate bad OpenC2 Responses`(file: File, name: String) {
-//        badTester(responseSchema, file)
-//    }
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("goodCommands")
+    fun `can validate good OpenC2 Commands`(file: File, name: String) {
+        goodTester(commandSchema, file)
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("badCommands")
+    fun `cannot validate bad OpenC2 Commands`(file: File, name: String) {
+        badTester(commandSchema, file)
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("goodResponses")
+    fun `can validate good OpenC2 Responses`(file: File, name: String) {
+        goodTester(responseSchema, file)
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("badResponses")
+    fun `cannot validate bad OpenC2 Responses`(file: File, name: String) {
+        badTester(responseSchema, file)
+    }
 
 
 
@@ -81,19 +81,19 @@ class JsonSchemaTest {
      * Tests for the community contributed JSON Schema definition files.
      */
 
-    private val contributedSchema = service.readSchema(Paths.get("./src/main/resources/contrib/oc2ls-v1.0-wd14_update.json"))
-
-    @ParameterizedTest(name = "{1}")
-    @MethodSource("goodContributedSchema")
-    fun `contributed - can validate good OpenC2 Commands and Responses`(file: File, name: String) {
-        goodTester(contributedSchema, file)
-    }
-
-    @ParameterizedTest(name = "{1}")
-    @MethodSource("badContributedSchema")
-    fun `contributed - cannot validate bad OpenC2 Commands and Responses`(file: File, name: String) {
-        badTester(contributedSchema, file)
-    }
+//    private val contributedSchema = service.readSchema(Paths.get("./src/main/resources/contrib/oc2ls-v1.0-wd14_update.json"))
+//
+//    @ParameterizedTest(name = "{1}")
+//    @MethodSource("goodContributedSchema")
+//    fun `contributed - can validate good OpenC2 Commands and Responses`(file: File, name: String) {
+//        goodTester(contributedSchema, file)
+//    }
+//
+//    @ParameterizedTest(name = "{1}")
+//    @MethodSource("badContributedSchema")
+//    fun `contributed - cannot validate bad OpenC2 Commands and Responses`(file: File, name: String) {
+//        badTester(contributedSchema, file)
+//    }
 
     /**
      * Support
