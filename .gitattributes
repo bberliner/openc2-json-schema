@@ -1,3 +1,7 @@
 *.kt linguist-language=Kotlin
 *.kts linguist-language=Kotlin
 *.json linguist-vendored
+src/test/resources/commands/bad/* linguist-vendored
+src/test/resources/commands/good/* linguist-vendored
+src/test/resources/responses/bad/* linguist-vendored
+src/test/resources/responses/good/* linguist-vendored
