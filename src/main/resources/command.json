@@ -573,7 +573,7 @@
         },
         "iri": {
           "title": "An internationalized resource identifier (IRI).",
-          "$ref": "#/definitions/uri"
+          "$ref": "#/definitions/iri"
         },
         "mac_addr": {
           "title": "A Media Access Control (MAC) address - EUI-48 or EUI-64",
